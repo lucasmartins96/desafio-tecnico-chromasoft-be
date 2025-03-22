@@ -1,0 +1,20 @@
+{
+  "name": "desafio-tecnico-chromasoft-be",
+  "version": "1.0.0",
+  "description": "Back-end do desafio técnico da Chromasoft",
+  "homepage": "https://github.com/lucasmartins96/desafio-tecnico-chromasoft-be#readme",
+  "bugs": {
+    "url": "https://github.com/lucasmartins96/desafio-tecnico-chromasoft-be/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasmartins96/desafio-tecnico-chromasoft-be.git"
+  },
+  "license": "MIT",
+  "author": "Lucas Martins da Silva",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
