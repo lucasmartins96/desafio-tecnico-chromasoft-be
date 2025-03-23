@@ -4,6 +4,11 @@ import { NextFunction, Request, Response } from 'express';
 import NotFoundError from '../common/request-errors/not-found';
 import BadRequestError from '../common/request-errors/bad-request';
 
+enum TaskStatus {
+	PENDING,
+	DONE,
+}
+
 export default class TaskController {
 	private readonly service: TaskService;
 
@@ -71,6 +76,52 @@ export default class TaskController {
 			res
 				.status(StatusCodes.OK)
 				.json({ message: 'Tarefa deletada com sucesso!' });
+		} catch (error) {
+			console.error(error);
+			next(error);
+		}
+	}
+
+	async addUserTask(
+		req: Request<
+			unknown,
+			unknown,
+			{ title?: string; description?: string; status?: TaskStatus },
+			unknown
+		>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		try {
+			const userId = req.user!.id;
+			const { title, description, status } = req.body;
+
+			if (!title || !description || !status) {
+				return next(
+					new BadRequestError({
+						message:
+							'Erro ao adicionar tarefa. Verifique se todos os campos foram preenchidos corretamente!',
+						showLogging: true,
+					}),
+				);
+			}
+
+			const newTask = await this.service.addUserTask({
+				title,
+				description,
+				status,
+				userId,
+			});
+
+			if (!newTask) {
+				return next(
+					new Error('Erro desconhecido ao adicionar tarefa. Tente novamente ou contate o suporte!'),
+				);
+			}
+
+			res
+				.status(StatusCodes.OK)
+				.json({ message: 'Nova tarefa adicionada com sucesso!' });
 		} catch (error) {
 			console.error(error);
 			next(error);
