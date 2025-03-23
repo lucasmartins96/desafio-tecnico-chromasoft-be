@@ -23,6 +23,10 @@ export default class TaskRoute implements Route {
 			.get(
 				this.authHandler.handleAuthorization.bind(this.authHandler),
 				this.controller.getAllUserTasks.bind(this.controller),
+			)
+			.delete(
+				this.authHandler.handleAuthorization.bind(this.authHandler),
+				this.controller.deleteUserTask.bind(this.controller),
 			);
 	}
 }
