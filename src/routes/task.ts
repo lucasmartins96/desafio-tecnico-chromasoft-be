@@ -31,6 +31,10 @@ export default class TaskRoute implements Route {
 			.post(
 				this.authHandler.handleAuthorization.bind(this.authHandler),
 				this.controller.addUserTask.bind(this.controller),
+			)
+			.patch(
+				this.authHandler.handleAuthorization.bind(this.authHandler),
+				this.controller.updateUserTask.bind(this.controller),
 			);
 	}
 }

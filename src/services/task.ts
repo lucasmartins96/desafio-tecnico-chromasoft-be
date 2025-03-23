@@ -1,8 +1,8 @@
 import { Task } from '../models/task';
 
 enum TaskStatus {
-  PENDING,
-  DONE,
+	PENDING,
+	DONE,
 }
 
 type DeleteProps = {
@@ -15,7 +15,15 @@ type AddProps = {
 	description: string;
 	status: TaskStatus;
 	userId: number;
-}
+};
+
+type UpdateProps = {
+	title?: string;
+	description?: string;
+	status?: TaskStatus;
+	userId: number;
+	taskId: number;
+};
 
 export default class TaskService {
 	constructor() {}
@@ -49,6 +57,24 @@ export default class TaskService {
 			const newTask = new Task({ ...props, createdAt });
 			const created = await newTask.save();
 			return created;
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
+	async updateUserTask(props: UpdateProps): Promise<number> {
+		try {
+			const [affectedCount] = await Task.update(
+				{
+					title: props.title,
+					description: props.description,
+					status: props.status,
+				},
+				{ where: { userId: props.userId, id: props.taskId } },
+			);
+
+			return affectedCount;
 		} catch (error) {
 			console.error(error);
 			throw error;

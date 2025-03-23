@@ -127,4 +127,53 @@ export default class TaskController {
 			next(error);
 		}
 	}
+
+	async updateUserTask(
+		req: Request<
+			unknown,
+			unknown,
+			{ id: number; title?: string; description?: string; status?: TaskStatus },
+			unknown
+		>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		try {
+			const userId = req.user!.id;
+			const { id, title, description, status } = req.body;
+
+			if (!id) {
+				return next(
+					new BadRequestError({
+						message: 'Erro ao identificar a tarefa a ser deletada!',
+						showLogging: true,
+					}),
+				);
+			}
+
+			const affectedCount = await this.service.updateUserTask({
+				title,
+				description,
+				status,
+				userId,
+				taskId: id,
+			});
+
+			if (affectedCount <= 0) {
+				return next(
+					new NotFoundError({
+						message: 'Tarefa não identificada!',
+						showLogging: true,
+					}),
+				);
+			}
+
+			res
+				.status(StatusCodes.OK)
+				.json({ message: 'Tarefa atualizada com sucesso!' });
+		} catch (error) {
+			console.error(error);
+			next(error);
+		}
+	}
 }
