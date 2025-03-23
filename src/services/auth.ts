@@ -11,6 +11,12 @@ type LoginPayload = {
 	token: string;
 };
 
+type AddProps = {
+	name: string;
+	email: string;
+	password: string;
+};
+
 export default class AuthService {
 	private jwt: JWTService;
 
@@ -52,6 +58,28 @@ export default class AuthService {
 				token,
 			};
 		} catch (error) {
+			throw error;
+		}
+	}
+
+	async signin(props: AddProps): Promise<User | null> {
+		try {
+			const hashedPassword = bcrypt.hashSync(props.password, 10);
+			const newUser = new User({ ...props, password: hashedPassword });
+			const created = await newUser.save();
+			return created;
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
+	async checkEmailExists(email: string): Promise<boolean> {
+		try {
+			const userFound = await User.findOne({ where: { email } });
+			return userFound !== null;
+		} catch (error) {
+			console.error(error);
 			throw error;
 		}
 	}
