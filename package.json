@@ -17,7 +17,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "dotenvx run -- nodemon src/index.ts",
-    "start:debug": "dotenvx run -- nodemon --inspect src/index.ts"
+    "start:debug": "dotenvx run -- nodemon --inspect src/index.ts",
+    "db:create": "dotenvx run -- npx sequelize-cli db:create",
+    "migrate:dev": "dotenvx run -- npx sequelize-cli db:migrate"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.39.0",
