@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import AuthService from '../services/auth';
 import BadRequestError from '../common/request-errors/bad-request';
 import JWTService from '../common/jwt';
+import UserSchema from '../schemas/user';
 
 class AuthController {
 	private readonly service: AuthService;
@@ -53,7 +54,27 @@ class AuthController {
 					);
 				}
 
-				const newUser = await this.service.signin({ name, email, password });
+				const result = UserSchema.safeParse({
+					name,
+					email,
+					password,
+				});
+
+				if (!result.success) {
+					const formatted = result.error.format();
+					const message =
+						formatted.name?._errors ??
+						formatted.email?._errors ??
+						formatted.password?._errors;
+
+					return next(
+						new BadRequestError({
+							message: message![0],
+						}),
+					);
+				}
+
+				const newUser = await this.service.signin(result.data);
 				const newUserId = newUser!.dataValues.id;
 				const newUserName = newUser!.dataValues.name;
 				const newUserEmail = newUser!.dataValues.email;
