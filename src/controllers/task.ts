@@ -3,6 +3,7 @@ import TaskService from '../services/task';
 import { NextFunction, Request, Response } from 'express';
 import NotFoundError from '../common/request-errors/not-found';
 import BadRequestError from '../common/request-errors/bad-request';
+import { TaskSchema, TaskUpdateSchema } from '../schemas/task';
 
 type TaskStatus = 'PENDING' | 'DONE';
 
@@ -103,16 +104,36 @@ export default class TaskController {
 				);
 			}
 
-			const newTask = await this.service.addUserTask({
+			const result = TaskSchema.safeParse({
 				title,
 				description,
 				status,
+			});
+
+			if (!result.success) {
+				const formatted = result.error.format();
+				const message =
+					formatted.title?._errors ??
+					formatted.description?._errors ??
+					formatted.status?._errors;
+
+				return next(
+					new BadRequestError({
+						message: message![0],
+					}),
+				);
+			}
+
+			const newTask = await this.service.addUserTask({
+				...result.data,
 				userId,
 			});
 
 			if (!newTask) {
 				return next(
-					new Error('Erro desconhecido ao adicionar tarefa. Tente novamente ou contate o suporte!'),
+					new Error(
+						'Erro desconhecido ao adicionar tarefa. Tente novamente ou contate o suporte!',
+					),
 				);
 			}
 
@@ -144,6 +165,26 @@ export default class TaskController {
 					new BadRequestError({
 						message: 'Erro ao identificar a tarefa a ser deletada!',
 						showLogging: true,
+					}),
+				);
+			}
+
+			const result = TaskUpdateSchema.safeParse({
+				title,
+				description,
+				status,
+			});
+
+			if (!result.success) {
+				const formatted = result.error.format();
+				const message =
+					formatted.title?._errors ??
+					formatted.description?._errors ??
+					formatted.status?._errors;
+
+				return next(
+					new BadRequestError({
+						message: message![0],
 					}),
 				);
 			}
