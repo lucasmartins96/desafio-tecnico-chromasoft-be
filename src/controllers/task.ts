@@ -4,10 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import NotFoundError from '../common/request-errors/not-found';
 import BadRequestError from '../common/request-errors/bad-request';
 
-enum TaskStatus {
-	PENDING,
-	DONE,
-}
+type TaskStatus = 'PENDING' | 'DONE';
 
 export default class TaskController {
 	private readonly service: TaskService;

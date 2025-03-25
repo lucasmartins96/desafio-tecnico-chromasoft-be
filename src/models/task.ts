@@ -11,10 +11,7 @@ import {
 import { User } from './user';
 import { Optional } from 'sequelize';
 
-enum TaskStatus {
-  PENDING,
-  DONE,
-}
+type TaskStatus = 'PENDING' | 'DONE';
 
 interface TaskAttributes {
 	id: number;

@@ -1,9 +1,6 @@
 import { Task } from '../models/task';
 
-enum TaskStatus {
-	PENDING,
-	DONE,
-}
+type TaskStatus = 'PENDING' | 'DONE';
 
 type DeleteProps = {
 	userId: number;
